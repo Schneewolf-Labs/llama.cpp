@@ -1951,6 +1951,11 @@ struct clip_model_loader {
                     model.mm_0_b = get_tensor(string_format(TN_LLAVA_PROJ, 0, "bias"));
                     model.mm_1_w = get_tensor(string_format(TN_LLAVA_PROJ, 2, "weight"));
                     model.mm_1_b = get_tensor(string_format(TN_LLAVA_PROJ, 2, "bias"));
+                    // Artemis: optional extra MLP after the merger (absent for vanilla Qwen3-VL)
+                    model.mm_artemis_fc1_w = get_tensor(string_format(TN_MM_ARTEMIS_FC1, "weight"), false);
+                    model.mm_artemis_fc1_b = get_tensor(string_format(TN_MM_ARTEMIS_FC1, "bias"),   false);
+                    model.mm_artemis_fc2_w = get_tensor(string_format(TN_MM_ARTEMIS_FC2, "weight"), false);
+                    model.mm_artemis_fc2_b = get_tensor(string_format(TN_MM_ARTEMIS_FC2, "bias"),   false);
                 } break;
             case PROJECTOR_TYPE_MIMOVL:
                 {
@@ -4216,6 +4221,10 @@ int clip_n_mmproj_embd(const struct clip_ctx * ctx) {
         case PROJECTOR_TYPE_YOUTUVL:
             return ctx->model.mm_1_b->ne[0];
         case PROJECTOR_TYPE_QWEN3VL:
+            // Artemis: extra MLP remaps to the decoder dim (no deepstack)
+            if (ctx->model.mm_artemis_fc2_b) {
+                return ctx->model.mm_artemis_fc2_b->ne[0];
+            }
             // main path + deepstack paths
             return ctx->model.mm_1_b->ne[0] * (1 + ctx->model.n_deepstack_layers);
         case PROJECTOR_TYPE_MIMOVL:

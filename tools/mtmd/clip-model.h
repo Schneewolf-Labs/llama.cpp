@@ -349,6 +349,14 @@ struct clip_model {
     ggml_tensor * post_ln_w;
     ggml_tensor * post_ln_b;
 
+    // Artemis: extra 2-layer MLP applied after the Qwen3-VL merger to bridge the
+    // merger's out_hidden_size to a non-Qwen decoder hidden size (e.g. Mistral).
+    // nullptr for vanilla Qwen3-VL.
+    ggml_tensor * mm_artemis_fc1_w = nullptr;
+    ggml_tensor * mm_artemis_fc1_b = nullptr;
+    ggml_tensor * mm_artemis_fc2_w = nullptr;
+    ggml_tensor * mm_artemis_fc2_b = nullptr;
+
     ggml_tensor * mm_fc_w;
     ggml_tensor * mm_fc_b;
     ggml_tensor * mm_ffn_up_w = nullptr;

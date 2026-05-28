@@ -126,6 +126,8 @@
 #define TN_DEEPSTACK_NORM  "v.deepstack.%d.norm.%s"     // qwen3vl deepstack
 #define TN_DEEPSTACK_FC1   "v.deepstack.%d.fc1.%s"      // qwen3vl deepstack
 #define TN_DEEPSTACK_FC2   "v.deepstack.%d.fc2.%s"      // qwen3vl deepstack
+#define TN_MM_ARTEMIS_FC1  "mm.artemis_fc1.%s"          // artemis: extra MLP after qwen3vl merger -> decoder dim
+#define TN_MM_ARTEMIS_FC2  "mm.artemis_fc2.%s"          // artemis: extra MLP after qwen3vl merger -> decoder dim
 
 // mimicpmv
 #define TN_MINICPMV_POS_EMBD_K "resampler.pos_embed_k"

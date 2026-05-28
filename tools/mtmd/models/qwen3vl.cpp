@@ -182,6 +182,17 @@ ggml_cgraph * clip_graph_qwen3vl::build() {
         model.mm_1_w, model.mm_1_b,
         ffn_op_type::FFN_GELU, -1);
 
+    // Artemis: extra 2-layer MLP projecting the merged features into a non-Qwen
+    // decoder's hidden space (e.g. Mistral). Absent (nullptr) for vanilla Qwen3-VL.
+    // Uses exact (erf) GELU to match the HF ArtemisVLMProjector (ACT2FN["gelu"]).
+    if (model.mm_artemis_fc1_w) {
+        embeddings = build_ffn(embeddings,
+            model.mm_artemis_fc1_w, model.mm_artemis_fc1_b,
+            nullptr, nullptr,
+            model.mm_artemis_fc2_w, model.mm_artemis_fc2_b,
+            ffn_op_type::FFN_GELU_ERF, -1);
+    }
+
     if (deepstack_features) {
         embeddings = ggml_concat(ctx0, embeddings, deepstack_features, 0);
     } // concat along the feature dimension
